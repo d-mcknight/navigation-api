@@ -16,7 +16,7 @@ class NavigationSearch:
         :param origin_location: Origin MapLocation
         :param destination_location: Destination MapLocation
         :param ors_api_key: OpenRouteService API Key
-        :param mot: mode of transportaiton to get directions for
+        :param mot: mode of transportation to get directions for
         """
         self.origin = origin_location
         self.destination = destination_location

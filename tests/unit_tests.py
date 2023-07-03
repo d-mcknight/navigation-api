@@ -1,10 +1,14 @@
 import unittest
 
+from os import environ
 from geopy.point import Point
 from geopy.location import Location
 
 
 class TestDataClasses(unittest.TestCase):
+    import geopy.geocoders
+    geopy.geocoders.options.default_user_agent = "navigation-api"
+
     def test_from_nominatim(self):
         from navigation_api.data_classes import MapLocation
         test_lat = 47.8219924
@@ -41,6 +45,9 @@ class TestDataClasses(unittest.TestCase):
 
 
 class TestLocationSearch(unittest.TestCase):
+    import geopy.geocoders
+    geopy.geocoders.options.default_user_agent = "navigation-api"
+
     def test_search_destination(self):
         from navigation_api.location import LocationSearch
         from navigation_api.data_classes import MapLocation
@@ -79,12 +86,14 @@ class TestLocationSearch(unittest.TestCase):
 
 
 class TestNavigation(unittest.TestCase):
+    test_api_key = environ.get("ORS_API_KEY")
+
     def test_get_routes(self):
         from navigation_api.navigation import NavigationSearch
         from navigation_api.data_classes import MapLocation, Route
         origin = MapLocation(lat=47.678177399999996, lon=-122.2073148196275)
         destination = MapLocation(lat=47.4797, lon=-122.2079)
-        search = NavigationSearch(origin, destination)
+        search = NavigationSearch(origin, destination, self.test_api_key)
         routes = search.get_routes()
         self.assertIsInstance(routes, list)
         for route in routes:
