@@ -1,0 +1,36 @@
+# This workflow will run unit tests
+
+name: Run Unit Tests
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  py_build_tests:
+    uses: neongeckocom/.github/.github/workflows/python_build_tests.yml@master
+  unit_tests:
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8, 3.9, '3.10']
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements/requirements.txt
+          pip install -r requirements/test_requirements.txt
+
+      - name: Unit Tests
+        run: |
+          pytest tests/unit_tests.py --doctest-modules --junitxml=tests/unit-test-results.xml
+      - name: Upload skill patch test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: unit-test-results
+          path: tests/unit-test-results.xml
+
